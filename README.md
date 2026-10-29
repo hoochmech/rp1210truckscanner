@@ -60,3 +60,8 @@ Pick **Simulated truck** in the adapter list to try the UI without hardware.
   a future step is a lookup from ECU part number / software ID to engine family.
 - VIN WMI table covers the main North American heavy-truck makers only.
 - 64-bit RP1210 drivers (RP1210 64-bit DLLs) would need an x64 build.
+
+## Releases
+
+Push a tag like `v0.2.0` and the `release` workflow runs the tests, builds `TruckScanner.exe`
+(stamped with that version), and publishes it on the GitHub Releases page.

@@ -1,0 +1,28 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet test tests/Rp1210Scanner.Tests -c Release
+      - name: Publish
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          dotnet publish src/Rp1210Scanner.App -c Release -o publish -p:Version=$version
+          Compress-Archive -Path publish/TruckScanner.exe -DestinationPath "TruckScanner-${{ github.ref_name }}-win-x86.zip"
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" "TruckScanner-${{ github.ref_name }}-win-x86.zip" publish/TruckScanner.exe --title "TruckScanner ${{ github.ref_name }}" --generate-notes
