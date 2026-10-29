@@ -3,6 +3,14 @@ name: release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release, e.g. v0.2.0 (the tag is created on the selected branch)
+        required: true
+
+env:
+  TAG: ${{ github.event.inputs.version || github.ref_name }}
 
 permissions:
   contents: write
@@ -19,10 +27,10 @@ jobs:
       - name: Publish
         shell: pwsh
         run: |
-          $version = "${{ github.ref_name }}".TrimStart('v')
+          $version = "$env:TAG".TrimStart('v')
           dotnet publish src/Rp1210Scanner.App -c Release -o publish -p:Version=$version
-          Compress-Archive -Path publish/TruckScanner.exe -DestinationPath "TruckScanner-${{ github.ref_name }}-win-x86.zip"
+          Compress-Archive -Path publish/TruckScanner.exe -DestinationPath "TruckScanner-$env:TAG-win-x86.zip"
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" "TruckScanner-${{ github.ref_name }}-win-x86.zip" publish/TruckScanner.exe --title "TruckScanner ${{ github.ref_name }}" --generate-notes
+        run: gh release create "$env:TAG" "TruckScanner-$env:TAG-win-x86.zip" publish/TruckScanner.exe --target "${{ github.sha }}" --title "TruckScanner $env:TAG" --generate-notes

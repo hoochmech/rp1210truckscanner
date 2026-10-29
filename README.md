@@ -63,5 +63,6 @@ Pick **Simulated truck** in the adapter list to try the UI without hardware.
 
 ## Releases
 
-Push a tag like `v0.2.0` and the `release` workflow runs the tests, builds `TruckScanner.exe`
-(stamped with that version), and publishes it on the GitHub Releases page.
+Push a tag like `v0.2.0`, or run the `release` workflow from the Actions tab with a version,
+and it runs the tests, builds `TruckScanner.exe` (stamped with that version), creates the tag
+if needed, and publishes it on the GitHub Releases page.
